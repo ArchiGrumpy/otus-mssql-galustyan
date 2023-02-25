@@ -1,2 +1,2 @@
 *.sql diff
-*.showplan diff
+*.sqlplan diff
