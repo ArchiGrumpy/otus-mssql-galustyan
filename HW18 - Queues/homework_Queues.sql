@@ -1,4 +1,4 @@
--- Для проверок 
+п»ї-- Р”Р»СЏ РїСЂРѕРІРµСЂРѕРє 
 select name, is_broker_enabled
 from sys.databases;
 
@@ -24,12 +24,12 @@ LEFT JOIN sys.service_contracts sc
 ON ce.service_contract_id = sc.service_contract_id
 ORDER BY conversation_handle;
 
--- Включаем Service Broker
+-- Р’РєР»СЋС‡Р°РµРј Service Broker
 USE master
 ALTER DATABASE Production
 SET ENABLE_BROKER  WITH ROLLBACK IMMEDIATE; 
 
--- Создаем типы сообщений
+-- РЎРѕР·РґР°РµРј С‚РёРїС‹ СЃРѕРѕР±С‰РµРЅРёР№
 USE Production
 -- For Request
 CREATE MESSAGE TYPE
@@ -41,7 +41,7 @@ CREATE MESSAGE TYPE
 VALIDATION=WELL_FORMED_XML; 
 GO
 
--- Создаем контракт
+-- РЎРѕР·РґР°РµРј РєРѕРЅС‚СЂР°РєС‚
 CREATE CONTRACT [//Prod/SB/Contract]
       ([//Prod/SB/RequestMessage]
          SENT BY INITIATOR,
@@ -50,7 +50,7 @@ CREATE CONTRACT [//Prod/SB/Contract]
       );
 GO
 
--- Создаем очередь и сервис для инициатора и цели
+-- РЎРѕР·РґР°РµРј РѕС‡РµСЂРµРґСЊ Рё СЃРµСЂРІРёСЃ РґР»СЏ РёРЅРёС†РёР°С‚РѕСЂР° Рё С†РµР»Рё
 CREATE QUEUE TargetQueueProd;
 
 CREATE SERVICE [//Prod/SB/TargetService]
@@ -66,7 +66,7 @@ CREATE SERVICE [//Prod/SB/InitiatorService]
        ([//Prod/SB/Contract]);
 GO
 
--- Создаем процедуру отправки сообщения
+-- РЎРѕР·РґР°РµРј РїСЂРѕС†РµРґСѓСЂСѓ РѕС‚РїСЂР°РІРєРё СЃРѕРѕР±С‰РµРЅРёСЏ
 CREATE OR ALTER  PROCEDURE SendNewTransaction
 	@TransId INT
 AS
@@ -101,19 +101,19 @@ BEGIN
 	[//Prod/SB/RequestMessage]
 	(@RequestMessage);
 	
-	--SELECT @RequestMessage AS SentRequestMessage; только для отладки. Убираем на проде
+	--SELECT @RequestMessage AS SentRequestMessage; С‚РѕР»СЊРєРѕ РґР»СЏ РѕС‚Р»Р°РґРєРё. РЈР±РёСЂР°РµРј РЅР° РїСЂРѕРґРµ
 	
 	COMMIT TRAN 
 END
 GO
 
--- Добавляем поля, задействованные в механизме очереди
+-- Р”РѕР±Р°РІР»СЏРµРј РїРѕР»СЏ, Р·Р°РґРµР№СЃС‚РІРѕРІР°РЅРЅС‹Рµ РІ РјРµС…Р°РЅРёР·РјРµ РѕС‡РµСЂРµРґРё
 ALTER TABLE Transactions
 ADD  TransactionConfirmedForProcessing DATETIME
 	,TransactionStatus int DEFAULT (0) ;
 GO
 
--- Первая активационная процедура
+-- РџРµСЂРІР°СЏ Р°РєС‚РёРІР°С†РёРѕРЅРЅР°СЏ РїСЂРѕС†РµРґСѓСЂР°
 CREATE OR ALTER  PROCEDURE GetNewTransaction
 AS
 BEGIN
@@ -135,7 +135,7 @@ BEGIN
 		@MessageType = Message_Type_Name
 	FROM dbo.TargetQueueProd; 
 
-	-- SELECT @Message; -- только для отладки.
+	-- SELECT @Message; -- С‚РѕР»СЊРєРѕ РґР»СЏ РѕС‚Р»Р°РґРєРё.
 
 	SET @xml = CAST(@Message AS XML);
 
@@ -151,7 +151,7 @@ BEGIN
 		WHERE tr.TransId = @TransId;
 	END;
 	
-	-- SELECT @Message AS ReceivedRequestMessage, @MessageType;  -- только для отладки.
+	-- SELECT @Message AS ReceivedRequestMessage, @MessageType;  -- С‚РѕР»СЊРєРѕ РґР»СЏ РѕС‚Р»Р°РґРєРё.
 	
 	-- Confirm and Send a reply
 	IF @MessageType=N'//Prod/SB/RequestMessage'
@@ -165,13 +165,13 @@ BEGIN
 		END CONVERSATION @TargetDlgHandle;
 	END 
 	
-	-- SELECT @ReplyMessage AS SentReplyMessage;  - только для отладки.
+	-- SELECT @ReplyMessage AS SentReplyMessage;  - С‚РѕР»СЊРєРѕ РґР»СЏ РѕС‚Р»Р°РґРєРё.
 
 	COMMIT TRAN;
 END
 GO
--- Вторая активационная процедура
--- Процедура обрабатывает ответное сообщение
+-- Р’С‚РѕСЂР°СЏ Р°РєС‚РёРІР°С†РёРѕРЅРЅР°СЏ РїСЂРѕС†РµРґСѓСЂР°
+-- РџСЂРѕС†РµРґСѓСЂР° РѕР±СЂР°Р±Р°С‚С‹РІР°РµС‚ РѕС‚РІРµС‚РЅРѕРµ СЃРѕРѕР±С‰РµРЅРёРµ
 CREATE OR ALTER PROCEDURE ConfirmTransaction
 AS
 BEGIN
@@ -188,13 +188,13 @@ BEGIN
 		
 		END CONVERSATION @InitiatorReplyDlgHandle; 
 		
-		-- SELECT @ReplyReceivedMessage AS ReceivedRepliedMessage;  - только для отладки.
+		-- SELECT @ReplyReceivedMessage AS ReceivedRepliedMessage;  - С‚РѕР»СЊРєРѕ РґР»СЏ РѕС‚Р»Р°РґРєРё.
 
 	COMMIT TRAN; 
 END
 GO 
 
--- Изменяем атрибуты очередей
+-- РР·РјРµРЅСЏРµРј Р°С‚СЂРёР±СѓС‚С‹ РѕС‡РµСЂРµРґРµР№
 ALTER QUEUE [dbo].[InitiatorQueueProd] WITH STATUS = ON , RETENTION = OFF , POISON_MESSAGE_HANDLING (STATUS = OFF) 
 	, ACTIVATION (   STATUS = ON ,
         PROCEDURE_NAME = ConfirmTransaction, MAX_QUEUE_READERS = 1, EXECUTE AS OWNER) ; 
@@ -206,6 +206,6 @@ ALTER QUEUE [dbo].[TargetQueueProd] WITH STATUS = ON , RETENTION = OFF , POISON_
 
 GO
 
---  Для теста 
-EXEC SendNewTransaction @TransId = 7 -- тут любимое ваше число :)
+--  Р”Р»СЏ С‚РµСЃС‚Р° 
+EXEC SendNewTransaction @TransId = 7 -- С‚СѓС‚ Р»СЋР±РёРјРѕРµ РІР°С€Рµ С‡РёСЃР»Рѕ :)
 GO
