@@ -1,42 +1,42 @@
 -- HOMEWORK CLR
--- Используемые источники для выполнения ДЗ : http://maximus-sql-notes.blogspot.com/2011/11/clr-sqlclr.html
+-- РСЃРїРѕР»СЊР·СѓРµРјС‹Рµ РёСЃС‚РѕС‡РЅРёРєРё РґР»СЏ РІС‹РїРѕР»РЅРµРЅРёСЏ Р”Р— : http://maximus-sql-notes.blogspot.com/2011/11/clr-sqlclr.html
 
--- Включаем CLR
+-- Р’РєР»СЋС‡Р°РµРј CLR
 EXEC sp_configure 'show advanced options' , '1';
 GO
 RECONFIGURE;
 GO
 EXEC sp_configure 'clr enabled' , '1'
-EXEC sp_configure 'clr strict security', 0; -- Без установки значения = 0 этого атрибута ошибка при создании сборки
+EXEC sp_configure 'clr strict security', 0; -- Р‘РµР· СѓСЃС‚Р°РЅРѕРІРєРё Р·РЅР°С‡РµРЅРёСЏ = 0 СЌС‚РѕРіРѕ Р°С‚СЂРёР±СѓС‚Р° РѕС€РёР±РєР° РїСЂРё СЃРѕР·РґР°РЅРёРё СЃР±РѕСЂРєРё
 GO
 RECONFIGURE;
 EXEC sp_configure 'show advanced options' , '0';
 GO
 
--- Проект VS в папке RegexpProject
--- Откомпилированная сборка RegexpProject.dll в папке RegexpProject\RegexpProject\bin\Debug\
+-- РџСЂРѕРµРєС‚ VS РІ РїР°РїРєРµ RegexpProject
+-- РћС‚РєРѕРјРїРёР»РёСЂРѕРІР°РЅРЅР°СЏ СЃР±РѕСЂРєР° RegexpProject.dll РІ РїР°РїРєРµ RegexpProject\RegexpProject\bin\Debug\
 
---  Добавляем нашу библиотеку сборкой в базу данных скриптом (можно было бы добавить через контекстное меню БД->Программирование->Сборки)
+--  Р”РѕР±Р°РІР»СЏРµРј РЅР°С€Сѓ Р±РёР±Р»РёРѕС‚РµРєСѓ СЃР±РѕСЂРєРѕР№ РІ Р±Р°Р·Сѓ РґР°РЅРЅС‹С… СЃРєСЂРёРїС‚РѕРј (РјРѕР¶РЅРѕ Р±С‹Р»Рѕ Р±С‹ РґРѕР±Р°РІРёС‚СЊ С‡РµСЂРµР· РєРѕРЅС‚РµРєСЃС‚РЅРѕРµ РјРµРЅСЋ Р‘Р”->РџСЂРѕРіСЂР°РјРјРёСЂРѕРІР°РЅРёРµ->РЎР±РѕСЂРєРё)
 USE Production
 CREATE ASSEMBLY CLRFunctions
 FROM 'C:\Users\user\source\repos\RegexpProject\RegexpProject\bin\Debug\RegexpProject.dll'
 WITH PERMISSION_SET = SAFE; 
 GO
 
--- Проверяем подключенные сборки
+-- РџСЂРѕРІРµСЂСЏРµРј РїРѕРґРєР»СЋС‡РµРЅРЅС‹Рµ СЃР±РѕСЂРєРё
 SELECT * FROM sys.assemblies as a
-WHERE a.is_user_defined = 1; -- пользовательские сборки
+WHERE a.is_user_defined = 1; -- РїРѕР»СЊР·РѕРІР°С‚РµР»СЊСЃРєРёРµ СЃР±РѕСЂРєРё
 GO
 
--- Подключаем функцию из сборки
+-- РџРѕРґРєР»СЋС‡Р°РµРј С„СѓРЅРєС†РёСЋ РёР· СЃР±РѕСЂРєРё
 CREATE FUNCTION dbo.fn_RegularChecker(@str NVARCHAR(100), @pattern NVARCHAR(100))  
 RETURNS bit
 AS EXTERNAL NAME [CLRFunctions].[RegexpProject.FunctionsCLR].IsMatch;
 GO 
 
--- Использование функции
--- Проверка Email
--- Заодно используем RAISERROR из другого занятия, раз по нему не задано ДЗ :)
+-- РСЃРїРѕР»СЊР·РѕРІР°РЅРёРµ С„СѓРЅРєС†РёРё
+-- РџСЂРѕРІРµСЂРєР° Email
+-- Р—Р°РѕРґРЅРѕ РёСЃРїРѕР»СЊР·СѓРµРј RAISERROR РёР· РґСЂСѓРіРѕРіРѕ Р·Р°РЅСЏС‚РёСЏ, СЂР°Р· РїРѕ РЅРµРјСѓ РЅРµ Р·Р°РґР°РЅРѕ Р”Р— :)
 CREATE OR ALTER   PROCEDURE [dbo].[UpdEmailCounteragentSp]
  @CounteragentID int,
  @NewEmail as NVARCHAR(50)
@@ -58,15 +58,15 @@ BEGIN
 END
 GO
 
--- Используем с невалидной электронной почтой
+-- РСЃРїРѕР»СЊР·СѓРµРј СЃ РЅРµРІР°Р»РёРґРЅРѕР№ СЌР»РµРєС‚СЂРѕРЅРЅРѕР№ РїРѕС‡С‚РѕР№
 EXEC [UpdEmailCounteragentSp] @CounteragentID = 1 , @NewEmail = 'ssfsmail.ru'
 GO
--- получаем сформированное нами сообщение при возникновении ошибки
---сообщение: 50000, уровень: 16, состояние: 1, процедура: UpdEmailCounteragentSp, строка: 10 [строка начала пакета: 56]
+-- РїРѕР»СѓС‡Р°РµРј СЃС„РѕСЂРјРёСЂРѕРІР°РЅРЅРѕРµ РЅР°РјРё СЃРѕРѕР±С‰РµРЅРёРµ РїСЂРё РІРѕР·РЅРёРєРЅРѕРІРµРЅРёРё РѕС€РёР±РєРё
+--СЃРѕРѕР±С‰РµРЅРёРµ: 50000, СѓСЂРѕРІРµРЅСЊ: 16, СЃРѕСЃС‚РѕСЏРЅРёРµ: 1, РїСЂРѕС†РµРґСѓСЂР°: UpdEmailCounteragentSp, СЃС‚СЂРѕРєР°: 10 [СЃС‚СЂРѕРєР° РЅР°С‡Р°Р»Р° РїР°РєРµС‚Р°: 56]
 --The email is not valid. Check the email address
 
--- Используем с валидной электронной почтой
+-- РСЃРїРѕР»СЊР·СѓРµРј СЃ РІР°Р»РёРґРЅРѕР№ СЌР»РµРєС‚СЂРѕРЅРЅРѕР№ РїРѕС‡С‚РѕР№
 EXEC [UpdEmailCounteragentSp] @CounteragentID = 1 , @NewEmail = 'ssf@smail.ru'
 GO
--- срабатывает вторая ветка, с обновлением таблицы
--- (затронуто строк: 1) 
+-- СЃСЂР°Р±Р°С‚С‹РІР°РµС‚ РІС‚РѕСЂР°СЏ РІРµС‚РєР°, СЃ РѕР±РЅРѕРІР»РµРЅРёРµРј С‚Р°Р±Р»РёС†С‹
+-- (Р·Р°С‚СЂРѕРЅСѓС‚Рѕ СЃС‚СЂРѕРє: 1) 
