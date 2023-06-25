@@ -1,0 +1,42 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SharedDataSet xmlns="http://schemas.microsoft.com/sqlserver/reporting/2010/01/shareddatasetdefinition" xmlns:rd="http://schemas.microsoft.com/SQLServer/reporting/reportdesigner">
+  <Description />
+  <DataSet Name="DataSetIncompleteCounteragentData">
+    <Query>
+      <DataSourceReference>DataSourceProduction</DataSourceReference>
+      <CommandType>StoredProcedure</CommandType>
+      <CommandText>GetIncompleteCounteragentDataSp</CommandText>
+    </Query>
+    <Fields>
+      <Field Name="CounteragentName">
+        <DataField>CounteragentName</DataField>
+        <rd:TypeName>System.String</rd:TypeName>
+      </Field>
+      <Field Name="Address">
+        <DataField>Address</DataField>
+        <rd:TypeName>System.String</rd:TypeName>
+      </Field>
+      <Field Name="Phone">
+        <DataField>Phone</DataField>
+        <rd:TypeName>System.String</rd:TypeName>
+      </Field>
+      <Field Name="CounteragentType">
+        <DataField>CounteragentType</DataField>
+        <rd:TypeName>System.String</rd:TypeName>
+      </Field>
+      <Field Name="BankInfo">
+        <DataField>BankInfo</DataField>
+        <rd:TypeName>System.String</rd:TypeName>
+      </Field>
+      <Field Name="Email">
+        <DataField>Email</DataField>
+        <rd:TypeName>System.String</rd:TypeName>
+      </Field>
+      <Field Name="WebsiteURL">
+        <DataField>WebsiteURL</DataField>
+        <rd:TypeName>System.String</rd:TypeName>
+      </Field>
+    </Fields>
+    <WidthSensitivity>True</WidthSensitivity>
+  </DataSet>
+</SharedDataSet>

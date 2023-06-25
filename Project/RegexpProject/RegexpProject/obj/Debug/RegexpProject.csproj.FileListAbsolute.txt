@@ -1,0 +1,10 @@
+C:\Users\user\source\repos\RegexpProject\RegexpProject\bin\Debug\RegexpProject.dll
+C:\Users\user\source\repos\RegexpProject\RegexpProject\bin\Debug\RegexpProject.pdb
+C:\Users\user\source\repos\RegexpProject\RegexpProject\bin\Debug\Microsoft.Analytics.Interfaces.dll
+C:\Users\user\source\repos\RegexpProject\RegexpProject\bin\Debug\Microsoft.Analytics.Interfaces.Streaming.dll
+C:\Users\user\source\repos\RegexpProject\RegexpProject\bin\Debug\Microsoft.Analytics.Types.dll
+C:\Users\user\source\repos\RegexpProject\RegexpProject\obj\Debug\RegexpProject.csproj.AssemblyReference.cache
+C:\Users\user\source\repos\RegexpProject\RegexpProject\obj\Debug\RegexpProject.csproj.CoreCompileInputs.cache
+C:\Users\user\source\repos\RegexpProject\RegexpProject\obj\Debug\RegexpProject.csproj.CopyComplete
+C:\Users\user\source\repos\RegexpProject\RegexpProject\obj\Debug\RegexpProject.dll
+C:\Users\user\source\repos\RegexpProject\RegexpProject\obj\Debug\RegexpProject.pdb
