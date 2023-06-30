@@ -60,3 +60,20 @@ SELECT [DocId],
       ,[CreateDate]
       ,[CounteragentId]
   FROM [Production].[dbo].[Docs]
+
+-- Заполняем [Production].[dbo].[Products]
+SET IDENTITY_INSERT [Production].[dbo].[Products]  ON; 
+INSERT INTO [Production].[dbo].[Products] (
+	   [ProductId]
+      ,[ProductName]
+      ,[ProductExtName]
+      ,[Photo]
+      ,[BrandID] )
+SELECT [StockItemID]
+      ,[StockItemName]
+      ,[StockItemName]
+	  ,[Photo]
+      ,[BrandId]
+FROM [WideWorldImporters].[Warehouse].[StockItems] as i
+LEFT JOIN [Production].[dbo].[Brands] as b ON b.Brand  = i.Brand COLLATE Cyrillic_General_CI_AS
+SET IDENTITY_INSERT [Production].[dbo].[Products]  OFF; 
